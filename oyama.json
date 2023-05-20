@@ -1,0 +1,28 @@
+
+{
+  "positions": {
+    "oyama": [5, 125],
+    "mihari": [267, 89, ],
+    "mihari1": [51, 87],
+      },
+     "oyama": "美波里ì～",
+    "mihari": "绪山美波里～",
+    "mihari1": "绪山",
+  },
+  "extensionConfig": {
+    "oyama": {
+      "isSwap": true
+    },
+    "mihari": {
+      "isSwap": true
+    },
+    "mihari1": {
+      "isSwap": true
+    }
+  },
+  "needDownloadFileList": [
+    "https://raw.githubusercontent.com/oyamamihari/mihari/main/oyama.png",
+    "https://raw.githubusercontent.com/oyamamihari/mihari/main/mihari.png",
+    "https://raw.githubusercontent.com/oyamamihari/mihari/main/mihari1.png",
+  ]
+}
