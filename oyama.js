@@ -143,3 +143,14 @@ function bytesToSize(bytes) {
   let i = Math.floor(Math.log(bytes) / Math.log(k));
   return (bytes / Math.pow(k, i)).toFixed(2) + " " + sizes[i];
 }
+
+function formatTime(time) {
+  // 检查时间戳是否为秒单位，如果是，则转换为毫秒
+  if (time < 1000000000000) time *= 1000;
+
+  let dateObj = new Date(time);
+  let year = dateObj.getFullYear();
+  let month = dateObj.getMonth() + 1;
+  let day = dateObj.getDate();
+  return year + "年" + month + "月" + day + "日";
+}
