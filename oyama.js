@@ -1,7 +1,7 @@
 /*
  * 作者@cc63
  * 感谢大佬们的原创与ChatGPT的帮助
- * 更新日期：2023.10.22
+ * 更新日期：2023.10.27
 */
 
 (async () => {
@@ -36,13 +36,9 @@
       content.push(`到期：${formatTime(args.expire || info.expire)}`);
     }
   }
-    // 获取当前时间
 
-  const currentTime = new Date();
-  const formattedTime = currentTime.getHours().toString().padStart(2, '0') + ':' + currentTime.getMinutes().toString().padStart(2, '0');
-  
   $done({
-    title: `${args.title}｜${formattedTime}`,
+    title: `${args.title}`,
     content: content.join("\n"),
     icon: args.icon || "icloud.fill",
     "icon-color": args.color || "#16AAF4",
@@ -98,29 +94,45 @@ async function getDataInfo(url) {
 }
 
 function getRemainingDays(resetDay) {
-  if (!resetDay) return;
+  if (!resetDay || resetDay < 1 || resetDay > 31) return;
 
   let now = new Date();
   let today = now.getDate();
   let month = now.getMonth();
   let year = now.getFullYear();
-  let daysInMonth;
+
+  // 计算当前月份和下个月份的天数
+  let daysInThisMonth = new Date(year, month + 1, 0).getDate();
+  let daysInNextMonth = new Date(year, month + 2, 0).getDate();
+
+  // 如果重置日大于当前月份的天数，则在当月的最后一天重置
+  resetDay = Math.min(resetDay, daysInThisMonth);
 
   if (resetDay > today) {
-    daysInMonth = 0;
+    // 如果重置日在本月内
+    return resetDay - today;
   } else {
-    daysInMonth = new Date(year, month + 1, 0).getDate();
+    // 如果重置日在下个月，确保不超过下个月的天数
+    resetDay = Math.min(resetDay, daysInNextMonth);
+    return daysInThisMonth - today + resetDay;
   }
-
-  return daysInMonth - today + resetDay;
 }
 
 function getExpireDaysLeft(expire) {
   if (!expire) return;
 
   let now = new Date().getTime();
-  if (/^[\d.]+$/.test(expire)) expire *= 1000;
-  let daysLeft = Math.ceil((expire - now) / (1000 * 60 * 60 * 24));
+  let expireTime;
+
+  // 检查是否为时间戳
+  if (/^[\d.]+$/.test(expire)) {
+    expireTime = parseInt(expire) * 1000;
+  } else {
+    // 尝试解析YYYY-MM-DD格式的日期
+    expireTime = new Date(expire).getTime();
+  }
+
+  let daysLeft = Math.ceil((expireTime - now) / (1000 * 60 * 60 * 24));
   return daysLeft > 0 ? daysLeft : null;
 }
 
@@ -130,15 +142,4 @@ function bytesToSize(bytes) {
   let sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   let i = Math.floor(Math.log(bytes) / Math.log(k));
   return (bytes / Math.pow(k, i)).toFixed(2) + " " + sizes[i];
-}
-
-function formatTime(time) {
-  // 检查时间戳是否为秒单位，如果是，则转换为毫秒
-  if (time < 1000000000000) time *= 1000;
-
-  let dateObj = new Date(time);
-  let year = dateObj.getFullYear();
-  let month = dateObj.getMonth() + 1;
-  let day = dateObj.getDate();
-  return year + "年" + month + "月" + day + "日";
 }
